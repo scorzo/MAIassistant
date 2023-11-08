@@ -72,11 +72,8 @@ if __name__ == "__main__":
     # Get the path to the config file from the user.
     config_file_path = input("Enter the path to the config file: ")
 
-    # Optionally, get the API URL if you're using a custom instance.
-    api_url = input("Enter the Revolt API URL (or press enter to use the default): ")
-
     # Create an AI assistant with the optional API URL.
-    ai_assistant = AIAssistant(config_file_path=config_file_path, api_url=api_url if api_url else None)
+    ai_assistant = AIAssistant(config_file_path=config_file_path)
 
     # Run the Revolt chat bot.
     ai_assistant.run()

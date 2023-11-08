@@ -1,0 +1,42 @@
+steps:
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret=YOUR_SECRET_NAME > /workspace/credentials.json
+
+# ... (Terraform steps here)
+
+steps:
+  - name: 'hashicorp/terraform:1.0.0'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        terraform init -backend-config="credentials=/workspace/credentials.json"
+        terraform plan -out=tfplan -input=false
+        terraform apply -input=false tfplan
+    volumes:
+      - name: 'terraform-cache'
+        path: '/cache'
+
+  - name: 'hashicorp/terraform:1.0.0'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        # Other Terraform commands or cleanup tasks, if necessary.
+
+volumes:
+  - name: 'terraform-cache'
+    path: '/cache'
+
+substitutions:
+  _CREDENTIALS: 'credentials.json'
+
+artifacts:
+  objects:
+    location: 'gs://your-gcs-bucket-name/path/to/store/artifacts/'
+    paths: ['path/to/your/artifacts/**']
+
